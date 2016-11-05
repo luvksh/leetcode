@@ -1,24 +1,17 @@
+https://leetcode.com/problems/first-missing-positive/
 class Solution {
 public:
     int firstMissingPositive(vector<int>& nums) {
-        int size = nums.size();
-        for(int i = 0; i < size; i++)
+        for(int i = 0; i < nums.size(); i++)
         {
-            while(nums[i] > 0 && nums[i] <= size && nums[i] != i+1)
+            while(nums[i] != i+1 && nums[i] > 0 && nums[i] <= nums.size() && nums[i] != nums[nums[i]-1])
             {
-                int temp = nums[nums[i]-1];
-                if(temp == nums[i])
-                    break;
-                nums[nums[i]-1] = nums[i];
-                nums[i] = temp;
+                swap(nums[i], nums[nums[i]-1]);
             }
         }
-        for(int i = 0 ; i < size; i++)
-        {
+        for(int i = 0; i < nums.size(); i++)
             if(nums[i] != i+1)
                 return i+1;
-        }
-        return size+1;
+        return nums.size() + 1;
     }
-    
 };
