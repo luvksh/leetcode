@@ -1,43 +1,29 @@
 //https://leetcode.com/problems/median-of-two-sorted-arrays/
-using namespace std;
 class Solution {
 public:
 	double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-		int l1 = nums1.size();
-		int l2 = nums2.size();
-		if (((l1 + l2) & 0x1) == 0)
-		{
-			double a = findKthElementSortedArray(nums1, 0, l1-1, nums2, 0, l2-1, (l1 + l2 + 1) / 2);
-			double b = findKthElementSortedArray(nums1, 0, l1-1, nums2, 0, l2-1, (l1 + l2 + 2) / 2);
-			return (a + b) / 2;
-		}
-		else
-		{
-			return findKthElementSortedArray(nums1, 0, l1-1, nums2, 0, l2-1, (l1 + l2 + 1) / 2);
-		}
-
+		int a = _findRankSortedArrays(nums1, nums2, 0, 0, (nums1.size() + nums2.size()+1) / 2);
+		int b = a;
+		if ((nums1.size() + nums2.size()) % 2 == 0)
+			b = _findRankSortedArrays(nums1, nums2, 0, 0, (nums1.size() + nums2.size()+2) / 2 );
+		return (a + b) / 2.0;
 	}
-
-	int findKthElementSortedArray(vector<int>& nums1, int s1, int e1, vector<int>& nums2, int s2, int e2, int k)
-	{
-		if (s1 > e1 )
-			return nums2[s2+k - 1];
-		if (s2 > e2)
-			return nums1[s1+k - 1];
-		if (k == 1)
-		{
-			return min(nums1[s1], nums2[s2]);
-		}
-
-		int i = min(e1-s1+1, k / 2);
-		int j = min(e2-s2+1, k / 2);
-		if (nums1[i - 1 + s1] < nums2[j - 1 + s2])
-		{
-			return findKthElementSortedArray(nums1, s1 + i, e1, nums2, s2, e2, k - i);
-		}
+	int _findRankSortedArrays(vector<int>& nums1, vector<int>& nums2, int i, int j, int rank) {
+		int s1 = nums1.size() - i;
+		int s2 = nums2.size() - j;
+		if (s1 == 0)
+			return nums2[j + rank - 1];
+		if (s2 == 0)
+			return nums1[i + rank - 1];
+		if (rank == 1)
+			return min(nums1[i], nums2[j]);
+		int x = min(rank / 2, s1);
+		int y = min(rank / 2, s2);
+		int a = nums1[i + x - 1];
+		int b = nums2[j + y - 1];
+		if (b > a)
+			return _findRankSortedArrays(nums1, nums2, i+x, j, rank-x);
 		else
-		{
-			return findKthElementSortedArray(nums1, s1, e1, nums2, s2 + j, e2, k - j);
-		}
+			return _findRankSortedArrays(nums1, nums2, i , j+y, rank-y);
 	}
 };
