@@ -2,39 +2,30 @@
 class Solution {
 public:
     int longestValidParentheses(string s) {
-        vector<pair<char,int>> stack;
-        int counter = 0;
+        stack<pair<char, int>> stck;
         int max = 0;
+        int n = 0;
         for(char ch:s)
         {
+            if(ch == '(')
+            {
+                stck.push(make_pair(ch, n+2));
+                n = 0;
+            }
             if(ch == ')')
             {
-                if(stack.empty())
-                {
-                    if(counter > max)
-                    {
-                        max = counter;
-                    }
-                    counter = 0;
-                }
+                if(stck.empty())
+                    n = 0;
                 else
                 {
-                    pair<char,int> t = stack.back();
-                    stack.pop_back();
-                    counter+=2;
-                    counter += t.second;
+                    n += stck.top().second;
+                    stck.pop();
+                    if(n > max)
+                        max = n;
                 }
             }
-            else
-            {
-                stack.push_back(make_pair(ch,counter));
-                if(counter>max)
-                    max = counter;
-                counter = 0;
-            }
         }
-        if(counter>max)
-            max = counter;
         return max;
     }
+};
 };
