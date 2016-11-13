@@ -8,48 +8,73 @@
  * };
  */
 class Codec {
-    void _serialize(TreeNode* root, string& s)
-    {
-        if(root == NULL)
-            s += ".";
-        else 
-        {
-            s += to_string(root->val);
-            s += " ";
-            _serialize(root->left, s);
-            _serialize(root->right, s);
-        }
-    }
-
-    TreeNode* _deserialize(string data, int& i) {
-        if(data[i] == '.')
-        {
-            i++;
-            return NULL;
-        }
-        else
-        {
-            int j = data.find(" ", i);
-            string num = data.substr(i, j-i);
-            TreeNode* t = new TreeNode(stoi(num));
-            i = j+1;
-            t->left = _deserialize(data, i);
-            t->right = _deserialize(data, i);
-            return t;
-        }
-    }
 public:
 
     // Encodes a tree to a single string.
     string serialize(TreeNode* root) {
-        string res = "";
-        _serialize(root, res);
-        return res;
+        queue<TreeNode*> q;
+        q.push(root);
+        string s = "";
+        while(!q.empty())
+        {
+            TreeNode* v = q.front();
+            q.pop();
+            if(v == NULL)
+                s += ".";
+            else
+            {
+                s += to_string(v->val);
+                s += " ";
+                q.push(v->left);
+                q.push(v->right);
+            }
+        }
+        return s;
     }
 
     // Decodes your encoded data to tree.
     TreeNode* deserialize(string data) {
         int i = 0;
-        return _deserialize(data, i);
+        queue<TreeNode*> q;
+        TreeNode* root;
+        if(data[i] == '.')
+        {
+            return NULL;
+        }
+        else
+        {
+            int j = data.find(" ", i);
+            root = new TreeNode(stoi(data.substr(i, j-i)));
+            i = j + 1;
+            q.push(root);
+        }
+        TreeNode *t;
+        TreeNode *u;
+        while(i < data.size() && !q.empty())
+        {
+            t = q.front();
+            q.pop();
+            for(int loop = 0; loop < 2; loop++)
+            {
+                if(data[i] == '.')
+                {
+                    u = NULL;
+                    i++;
+                }
+                else
+                {
+                    int j = data.find(" ", i);
+                    u = new TreeNode(stoi(data.substr(i, j-i)));
+                    i = j + 1;
+                    q.push(u);
+                }
+                loop == 0 ? t->left = u : t->right = u;
+            }
+        }
+        return root;
     }
 };
+
+// Your Codec object will be instantiated and called as such:
+// Codec codec;
+// codec.deserialize(codec.serialize(root));
