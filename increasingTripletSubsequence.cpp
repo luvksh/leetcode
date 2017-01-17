@@ -1,30 +1,23 @@
 class Solution {
 public:
     bool increasingTriplet(vector<int>& nums) {
-        pair<int, int> two = make_pair(-1,-1);
-        int one = -1;
-        for(int i=0; i <nums.size(); i++)
+        int i = -1, j= -1;
+        for(int p = 1; p < nums.size(); p++)
         {
-            if(two.first != -1 && nums[i] > nums[two.second])
-                return true;
-            if(one != -1)
+            if(nums[p] <= nums[p-1])
             {
-                if(nums[i] > nums[one])
-                {
-                    two.first = one;
-                    two.second = i;
-                    one = -1;
-                }
+                if(i != -1 && nums[p] > nums[i])
+                    j = p;
+            }
+            else
+            {
+                if(j != -1 && nums[p] > nums[j])
+                    return true;
                 else
                 {
-                    one = i;
+                    i = p - 1;
+                    j = p;
                 }
-            }
-            else if(two.first != -1 && nums[i] > nums[two.first])
-                two.second = i;
-            else if(one == -1)
-            {
-                one = i;
             }
         }
         return false;
